@@ -1,0 +1,7 @@
+#root1{
+    -fx-background-color: #262626;
+}
+Label{
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+}

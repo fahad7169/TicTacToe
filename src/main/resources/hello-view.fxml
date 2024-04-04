@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.tictactoe.Controller">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 
- 
-</VBox>
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.tictactoe.Controller"> 
+   <children>
+      <Label layoutX="53.0" layoutY="141.0" prefHeight="54.0" prefWidth="138.0" text="PLAYER 1" />
+      <TextField fx:id="player1" layoutX="52.0" layoutY="188.0" prefHeight="44.0" prefWidth="406.0" />
+      <Label layoutX="53.0" layoutY="270.0" prefHeight="54.0" prefWidth="118.0" text="PLAYER 2" />
+      <TextField fx:id="player2" layoutX="53.0" layoutY="324.0" prefHeight="44.0" prefWidth="406.0" />
+      <Button fx:id="playButton" contentDisplay="GRAPHIC_ONLY" layoutX="211.0" layoutY="383.0" mnemonicParsing="false" onAction="#startGame" prefHeight="44.0" prefWidth="74.0">
+         <graphic>
+            <ImageView fitHeight="70.0" fitWidth="108.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@play.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Label fx:id="myLabel" layoutX="52.0" layoutY="373.0" prefHeight="1.0" prefWidth="195.0" text="You can't leave any field empty" textFill="#d10d0d" visible="false" />
+   </children>
+</AnchorPane>
