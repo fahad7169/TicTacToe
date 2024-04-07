@@ -1,5 +1,8 @@
 package org.example.tictactoe;
 
+import javafx.animation.Interpolator;
+import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -8,14 +11,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
-import javafx.scene.effect.Glow;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.GridPane;
+import javafx.scene.effect.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -23,6 +20,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.Locale;
@@ -32,21 +30,59 @@ import java.util.ResourceBundle;
 public class GameController implements Initializable {
     private String player1Name;
     private String player2Name;
+    @FXML private AnchorPane root1;
 
     @FXML
     private GridPane myGridPane;
     @FXML
     private Label player1Label,player2Label,playerTurnLabel;
-    boolean turnX;
-    String Turn;
-    boolean gameOver;
+    private boolean turnX;
+    private String Turn;
+    private boolean gameOver;
 
-    Button[][] buttons;
+    private Button[][] buttons;
+    private Line line;
+    private TranslateTransition translateTransition;
+    private Transition length;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         buttons=new Button[3][3];
         Bloom glow=new Bloom(0.5);
+
+
+        //Horizontal line
+        line=new Line();
+        line.setStartX(80);
+        line.setEndX(620);
+        line.setStartY(210);
+        line.setEndY(210);
+        line.setStrokeWidth(10);
+        line.setStroke(Paint.valueOf(String.valueOf(Color.INDIANRED)));
+        line.setEffect(glow);
+        line.setRotate(90);
+        line.setBlendMode(BlendMode.DIFFERENCE);
+        root1.getChildren().add(line);
+
+        translateTransition=new TranslateTransition(Duration.seconds(1),line);
+        translateTransition.setInterpolator(Interpolator.DISCRETE);
+        translateTransition.setCycleCount(1);
+
+        length = new Transition() {
+            {
+                setCycleDuration(Duration.seconds(1));
+            }
+
+            @Override
+            protected void interpolate(double frac) {
+                // Increase the length of the line based on the animation progress
+                line.setEndX(80 + frac * 530);
+            }
+        };
+        translateTransition.play();
+        length.play();
+
 
 
 
@@ -106,7 +142,10 @@ public class GameController implements Initializable {
 
                     }
                     //check for winner
-                    checkWinner();
+                    if (!gameOver){
+                        checkWinner();
+                    }
+
 
                 });
 
@@ -119,6 +158,15 @@ public class GameController implements Initializable {
         }
 
     }
+    public void HorizontalLineSet(int yValue){
+        line.setStartX(80);
+        line.setEndX(620);
+        line.setStartY(yValue);
+        line.setEndY(yValue);
+        translateTransition.play();
+        length.play();
+
+    }
     public void checkWinner(){
         //Horizontal
         for (int i=0; i<3; i++){
@@ -126,6 +174,14 @@ public class GameController implements Initializable {
                     buttons[i][0].getText().equals(buttons[i][1].getText()) &&
                     buttons[i][0].getText().equals(buttons[i][2].getText())){
                     gameOver=true;
+                    if (i==0 ){
+                        HorizontalLineSet(210);
+                    } else if (i==1) {
+                        HorizontalLineSet(425);
+                    } else if (i==2){
+                        HorizontalLineSet(645);
+                    }
+                    break;
             }
         }
 
@@ -135,6 +191,7 @@ public class GameController implements Initializable {
                     buttons[0][i].getText().equals(buttons[1][i].getText()) &&
                     buttons[0][i].getText().equals(buttons[2][i].getText())){
                 gameOver=true;
+                break;
             }
         }
 
