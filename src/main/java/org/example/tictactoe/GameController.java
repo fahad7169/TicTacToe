@@ -54,14 +54,13 @@ public class GameController implements Initializable {
 
         //Horizontal line
         line=new Line();
-        line.setStartX(80);
-        line.setEndX(620);
-        line.setStartY(210);
-        line.setEndY(210);
+//        line.setStartX(584);
+//        line.setEndX(584);
+//        line.setStartY(170);
+//        line.setEndY(685);
         line.setStrokeWidth(10);
         line.setStroke(Paint.valueOf(String.valueOf(Color.INDIANRED)));
         line.setEffect(glow);
-        line.setRotate(90);
         line.setBlendMode(BlendMode.DIFFERENCE);
         root1.getChildren().add(line);
 
@@ -77,11 +76,11 @@ public class GameController implements Initializable {
             @Override
             protected void interpolate(double frac) {
                 // Increase the length of the line based on the animation progress
-                line.setEndX(80 + frac * 530);
+                line.setEndY(170 + frac * 515);
             }
         };
-        translateTransition.play();
-        length.play();
+//        translateTransition.play();
+//        length.play();
 
 
 
@@ -163,9 +162,40 @@ public class GameController implements Initializable {
         line.setEndX(620);
         line.setStartY(yValue);
         line.setEndY(yValue);
-        translateTransition.play();
-        length.play();
+        Transition length1 = new Transition() {
+            {
+                setCycleDuration(Duration.seconds(1));
+            }
 
+            @Override
+            protected void interpolate(double frac) {
+                // Increase the length of the line based on the animation progress
+                line.setEndX(80 + frac * 540);
+            }
+        };
+        translateTransition.play();
+        length1.play();
+
+    }
+    public void VericalLineSet(int xValue){
+        line.setStartX(xValue);
+        line.setEndX(xValue);
+        line.setStartY(170);
+        line.setEndY(685);
+
+        Transition length1 = new Transition() {
+            {
+                setCycleDuration(Duration.seconds(1));
+            }
+
+            @Override
+            protected void interpolate(double frac) {
+                // Increase the length of the line based on the animation progress
+                line.setEndY(170 + frac * 515);
+            }
+        };
+        translateTransition.play();
+        length1.play();
     }
     public void checkWinner(){
         //Horizontal
@@ -191,6 +221,13 @@ public class GameController implements Initializable {
                     buttons[0][i].getText().equals(buttons[1][i].getText()) &&
                     buttons[0][i].getText().equals(buttons[2][i].getText())){
                 gameOver=true;
+                if (i==0 ){
+                   VericalLineSet(118);
+                } else if (i==1) {
+                    VericalLineSet(352);
+                } else if (i==2){
+                     VericalLineSet(584);
+                }
                 break;
             }
         }
