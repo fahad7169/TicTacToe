@@ -8,11 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import kotlin.jvm.internal.PackageReference;
-
-import java.util.Stack;
 
 public class Controller {
     @FXML

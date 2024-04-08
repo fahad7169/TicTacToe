@@ -4,11 +4,13 @@ import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.*;
@@ -16,20 +18,18 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.net.URL;
-import java.util.Locale;
 import java.util.Random;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
     private String player1Name;
     private String player2Name;
+    @FXML private Button restartButton;
     @FXML private AnchorPane root1;
 
     @FXML
@@ -38,7 +38,7 @@ public class GameController implements Initializable {
     private Label player1Label,player2Label,playerTurnLabel;
     private boolean turnX;
     private String Turn;
-    private boolean gameOver;
+    private boolean gameOver,gameDraw;
 
     private Button[][] buttons;
     private Line line;
@@ -106,7 +106,7 @@ public class GameController implements Initializable {
                 int finalI = i;
                 int finalJ=j;
                 buttons[i][j].setOnAction(event -> {
-                    if (!gameOver) {
+                    if (!gameOver && !gameDraw) {
                         if (turnX && buttons[finalI][finalJ].getText().isEmpty()) {
 
                             buttons[finalI][finalJ].setText("O");
@@ -116,6 +116,7 @@ public class GameController implements Initializable {
                                 playerTurnLabel.setText(Turn + "'s Turn");
                             }
                             else {
+                                restartButton.setVisible(true);
                                 playerTurnLabel.setText(Turn + " is Winner");
                             }
 
@@ -127,6 +128,7 @@ public class GameController implements Initializable {
                                 playerTurnLabel.setText(Turn + "'s Turn");
                             }
                             else {
+                                restartButton.setVisible(true);
                                 playerTurnLabel.setText(Turn + " is Winner");
                             }
 
@@ -135,15 +137,9 @@ public class GameController implements Initializable {
 
 
                     }
-                    //check for winner
-//                    if (!gameOver){
-//                        checkWinner();
-//                    }
 
 
                 });
-
-
 
 
             }
@@ -283,6 +279,28 @@ public class GameController implements Initializable {
     public void setNames(String player1Name, String player2Name){
         this.player1Name=player1Name;
         this.player2Name=player2Name;
+    }
+
+    public void restartGame(ActionEvent event) throws Exception{
+
+        try {
+            FXMLLoader fxmlLoader=new FXMLLoader(getClass().getResource("/game.fxml"));
+
+            Parent root=fxmlLoader.load();
+            GameController controller=fxmlLoader.getController();
+            controller.setNames(player1Name,player2Name);
+
+            Stage stage=(Stage)((Node) event.getSource()).getScene().getWindow();
+            stage.show();
+
+            Scene scene=new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 }
