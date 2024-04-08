@@ -43,44 +43,27 @@ public class GameController implements Initializable {
     private Button[][] buttons;
     private Line line;
     private TranslateTransition translateTransition;
-    private Transition length;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         buttons=new Button[3][3];
-        Bloom glow=new Bloom(0.5);
+        DropShadow dropShadow=new DropShadow();
+        dropShadow.setRadius(15);
+        dropShadow.setColor(Color.SKYBLUE);
 
 
-        //Horizontal line
+        //LINE FOR FINISHING GAME
         line=new Line();
-//        line.setStartX(584);
-//        line.setEndX(584);
-//        line.setStartY(170);
-//        line.setEndY(685);
-        line.setStrokeWidth(10);
-        line.setStroke(Paint.valueOf(String.valueOf(Color.INDIANRED)));
-        line.setEffect(glow);
+        line.setStrokeWidth(7);
+        line.setStroke(Paint.valueOf(String.valueOf(Color.SKYBLUE)));
         line.setBlendMode(BlendMode.DIFFERENCE);
+        line.setEffect(dropShadow);
         root1.getChildren().add(line);
 
         translateTransition=new TranslateTransition(Duration.seconds(1),line);
         translateTransition.setInterpolator(Interpolator.DISCRETE);
         translateTransition.setCycleCount(1);
-
-        length = new Transition() {
-            {
-                setCycleDuration(Duration.seconds(1));
-            }
-
-            @Override
-            protected void interpolate(double frac) {
-                // Increase the length of the line based on the animation progress
-                line.setEndY(170 + frac * 515);
-            }
-        };
-//        translateTransition.play();
-//        length.play();
 
 
 
@@ -107,14 +90,13 @@ public class GameController implements Initializable {
                 buttons[i][j]=new Button();
                 buttons[i][j].setFont(Font.font("Arial",110));
                 buttons[i][j].setTextFill(Paint.valueOf(String.valueOf(Color.WHITE)));
-//                buttons[i][j].setTextAlignment(TextAlignment.LEFT);
 
                 buttons[i][j].setStyle("-fx-border-color: white !important;");
 
 
                 buttons[i][j].setPrefSize(250,217);
 
-                buttons[i][j].setEffect(glow);
+                buttons[i][j].setEffect(dropShadow);
 
 
 
@@ -128,12 +110,25 @@ public class GameController implements Initializable {
                         if (turnX && buttons[finalI][finalJ].getText().isEmpty()) {
 
                             buttons[finalI][finalJ].setText("O");
-                            Turn = (Turn.equals(player1Name)) ? player2Name : player1Name;
-                            playerTurnLabel.setText(Turn + "'s Turn");
+                            checkWinner();
+                            if (!gameOver) {
+                                Turn = (Turn.equals(player1Name)) ? player2Name : player1Name;
+                                playerTurnLabel.setText(Turn + "'s Turn");
+                            }
+                            else {
+                                playerTurnLabel.setText(Turn + " is Winner");
+                            }
+
                         } else if (!turnX && buttons[finalI][finalJ].getText().isEmpty()) {
                             buttons[finalI][finalJ].setText("X");
-                            Turn = (Turn.equals(player1Name)) ? player2Name : player1Name;
-                            playerTurnLabel.setText(Turn + "'s Turn");
+                            checkWinner();
+                            if (!gameOver) {
+                                Turn = (Turn.equals(player1Name)) ? player2Name : player1Name;
+                                playerTurnLabel.setText(Turn + "'s Turn");
+                            }
+                            else {
+                                playerTurnLabel.setText(Turn + " is Winner");
+                            }
 
                         }
                         turnX = !turnX;
@@ -141,9 +136,9 @@ public class GameController implements Initializable {
 
                     }
                     //check for winner
-                    if (!gameOver){
-                        checkWinner();
-                    }
+//                    if (!gameOver){
+//                        checkWinner();
+//                    }
 
 
                 });
@@ -197,6 +192,42 @@ public class GameController implements Initializable {
         translateTransition.play();
         length1.play();
     }
+    public void Diagonal1LineSet(){
+        line.setStartX(80);
+        line.setStartY(170);
+        Transition length1 = new Transition() {
+            {
+                setCycleDuration(Duration.seconds(1));
+            }
+
+            @Override
+            protected void interpolate(double frac) {
+                // Increase the length of the line based on the animation progress
+                line.setEndX(80 + frac * 540 );
+                line.setEndY(170 + frac * 505);
+            }
+        };
+        translateTransition.play();
+        length1.play();
+    }
+    public void Diagonal2LineSet(){
+        line.setStartX(615);
+        line.setStartY(175);
+         Transition length1 = new Transition() {
+            {
+                setCycleDuration(Duration.seconds(1));
+            }
+
+            @Override
+            protected void interpolate(double frac) {
+                // Increase the length of the line based on the animation progress
+                line.setEndX(615 - frac * 530 );
+                line.setEndY(175 + frac * 495);
+            }
+        };
+        translateTransition.play();
+        length1.play();
+    }
     public void checkWinner(){
         //Horizontal
         for (int i=0; i<3; i++){
@@ -235,9 +266,11 @@ public class GameController implements Initializable {
         //Diagonally
         if (!buttons[0][0].getText().isEmpty() && buttons[0][0].getText().equals(buttons[1][1].getText()) && buttons[0][0].getText().equals(buttons[2][2].getText())){
             gameOver=true;
+            Diagonal1LineSet();
         }
         if (!buttons[0][2].getText().isEmpty() && buttons[0][2].getText().equals(buttons[1][1].getText()) && buttons[0][2].getText().equals(buttons[2][0].getText())){
             gameOver=true;
+            Diagonal2LineSet();
         }
 
     }
