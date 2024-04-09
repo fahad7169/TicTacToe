@@ -66,21 +66,12 @@ public class GameController implements Initializable {
         translateTransition.setCycleCount(1);
 
 
-
-
-
-
-
-
         Platform.runLater(()->{
             player1Label.setText("Player 1: "+player1Name);
             player2Label.setText("Player 2: "+player2Name);
-
-
-        });
-        Platform.runLater(()->{
             Turn=setFirstTurn();
             playerTurnLabel.setText(Turn + "'s Turn");
+
         });
 
 
@@ -111,9 +102,16 @@ public class GameController implements Initializable {
 
                             buttons[finalI][finalJ].setText("O");
                             checkWinner();
+                            checkDraw();
                             if (!gameOver) {
                                 Turn = (Turn.equals(player1Name)) ? player2Name : player1Name;
-                                playerTurnLabel.setText(Turn + "'s Turn");
+                                if(!gameDraw){
+                                    playerTurnLabel.setText(Turn + "'s Turn");
+                                }
+                                else {
+                                    playerTurnLabel.setText("Game Draw");
+                                }
+
                             }
                             else {
                                 restartButton.setVisible(true);
@@ -123,9 +121,15 @@ public class GameController implements Initializable {
                         } else if (!turnX && buttons[finalI][finalJ].getText().isEmpty()) {
                             buttons[finalI][finalJ].setText("X");
                             checkWinner();
+                            checkDraw();
                             if (!gameOver) {
                                 Turn = (Turn.equals(player1Name)) ? player2Name : player1Name;
-                                playerTurnLabel.setText(Turn + "'s Turn");
+                                if(!gameDraw){
+                                    playerTurnLabel.setText(Turn + "'s Turn");
+                                }
+                                else {
+                                    playerTurnLabel.setText("Game Draw");
+                                }
                             }
                             else {
                                 restartButton.setVisible(true);
@@ -148,7 +152,7 @@ public class GameController implements Initializable {
         }
 
     }
-    public void HorizontalLineSet(int yValue){
+    private void HorizontalLineSet(int yValue){
         line.setStartX(80);
         line.setEndX(620);
         line.setStartY(yValue);
@@ -168,7 +172,7 @@ public class GameController implements Initializable {
         length1.play();
 
     }
-    public void VericalLineSet(int xValue){
+    private void VerticalLineSet(int xValue){
         line.setStartX(xValue);
         line.setEndX(xValue);
         line.setStartY(170);
@@ -188,7 +192,7 @@ public class GameController implements Initializable {
         translateTransition.play();
         length1.play();
     }
-    public void Diagonal1LineSet(){
+    private void Diagonal1LineSet(){
         line.setStartX(80);
         line.setStartY(170);
         Transition length1 = new Transition() {
@@ -206,7 +210,7 @@ public class GameController implements Initializable {
         translateTransition.play();
         length1.play();
     }
-    public void Diagonal2LineSet(){
+    private void Diagonal2LineSet(){
         line.setStartX(615);
         line.setStartY(175);
          Transition length1 = new Transition() {
@@ -224,7 +228,21 @@ public class GameController implements Initializable {
         translateTransition.play();
         length1.play();
     }
-    public void checkWinner(){
+    public void checkDraw(){
+        if (!buttons[0][0].getText().isEmpty() &&
+                !buttons[0][1].getText().isEmpty() &&
+                !buttons[0][2].getText().isEmpty() &&
+                !buttons[1][0].getText().isEmpty() &&
+                !buttons[1][1].getText().isEmpty() &&
+                !buttons[1][2].getText().isEmpty() &&
+                !buttons[2][0].getText().isEmpty() &&
+                !buttons[2][1].getText().isEmpty() &&
+                !buttons[2][2].getText().isEmpty()  ){
+//            System.out.println("Hey, it's draw");
+            gameDraw=true;
+        }
+    }
+    private void checkWinner(){
         //Horizontal
         for (int i=0; i<3; i++){
             if (!buttons[i][0].getText().isEmpty() &&
@@ -235,7 +253,7 @@ public class GameController implements Initializable {
                         HorizontalLineSet(210);
                     } else if (i==1) {
                         HorizontalLineSet(425);
-                    } else if (i==2){
+                    } else{
                         HorizontalLineSet(645);
                     }
                     break;
@@ -249,11 +267,11 @@ public class GameController implements Initializable {
                     buttons[0][i].getText().equals(buttons[2][i].getText())){
                 gameOver=true;
                 if (i==0 ){
-                   VericalLineSet(118);
+                   VerticalLineSet(118);
                 } else if (i==1) {
-                    VericalLineSet(352);
-                } else if (i==2){
-                     VericalLineSet(584);
+                    VerticalLineSet(352);
+                } else{
+                     VerticalLineSet(584);
                 }
                 break;
             }
@@ -270,7 +288,7 @@ public class GameController implements Initializable {
         }
 
     }
-    public String setFirstTurn(){
+    private String setFirstTurn(){
         Random random=new Random();
         return (random.nextBoolean())?player1Name:player2Name;
 
@@ -281,7 +299,7 @@ public class GameController implements Initializable {
         this.player2Name=player2Name;
     }
 
-    public void restartGame(ActionEvent event) throws Exception{
+    public void restartGame(ActionEvent event){
 
         try {
             FXMLLoader fxmlLoader=new FXMLLoader(getClass().getResource("/game.fxml"));
