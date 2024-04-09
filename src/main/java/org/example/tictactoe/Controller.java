@@ -29,7 +29,6 @@ public class Controller {
             controller.setNames(text1,text2);
 
             Stage stage=(Stage)((Node) event.getSource()).getScene().getWindow();
-            stage.show();
 
             Scene scene=new Scene(root);
             stage.setScene(scene);

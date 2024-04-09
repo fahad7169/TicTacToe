@@ -1,9 +1,8 @@
 package org.example.tictactoe;
 
-import javafx.animation.Interpolator;
-import javafx.animation.Transition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,16 +12,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.security.Key;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -43,6 +45,7 @@ public class GameController implements Initializable {
     private Button[][] buttons;
     private Line line;
     private TranslateTransition translateTransition;
+    @FXML private ProgressIndicator loader;
 
 
     @Override
@@ -51,6 +54,9 @@ public class GameController implements Initializable {
         DropShadow dropShadow=new DropShadow();
         dropShadow.setRadius(15);
         dropShadow.setColor(Color.SKYBLUE);
+
+
+
 
 
         //LINE FOR FINISHING GAME
@@ -109,6 +115,7 @@ public class GameController implements Initializable {
                                     playerTurnLabel.setText(Turn + "'s Turn");
                                 }
                                 else {
+                                    restartButton.setVisible(true);
                                     playerTurnLabel.setText("Game Draw");
                                 }
 
@@ -128,6 +135,7 @@ public class GameController implements Initializable {
                                     playerTurnLabel.setText(Turn + "'s Turn");
                                 }
                                 else {
+                                    restartButton.setVisible(true);
                                     playerTurnLabel.setText("Game Draw");
                                 }
                             }
@@ -228,7 +236,7 @@ public class GameController implements Initializable {
         translateTransition.play();
         length1.play();
     }
-    public void checkDraw(){
+    private void checkDraw(){
         if (!buttons[0][0].getText().isEmpty() &&
                 !buttons[0][1].getText().isEmpty() &&
                 !buttons[0][2].getText().isEmpty() &&
@@ -301,23 +309,44 @@ public class GameController implements Initializable {
 
     public void restartGame(ActionEvent event){
 
-        try {
-            FXMLLoader fxmlLoader=new FXMLLoader(getClass().getResource("/game.fxml"));
+        loader.setVisible(true);
+        Task<Void> task=new Task<>() {
 
-            Parent root=fxmlLoader.load();
-            GameController controller=fxmlLoader.getController();
-            controller.setNames(player1Name,player2Name);
+            @Override
+            protected Void call() throws Exception {
 
-            Stage stage=(Stage)((Node) event.getSource()).getScene().getWindow();
-            stage.show();
 
-            Scene scene=new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+
+                Thread.sleep(200);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(event2 -> {
+            loader.setVisible(false);
+
+            try {
+                FXMLLoader fxmlLoader=new FXMLLoader(getClass().getResource("/game.fxml"));
+
+                Parent root=fxmlLoader.load();
+                GameController controller=fxmlLoader.getController();
+                controller.setNames(player1Name,player2Name);
+
+                Stage stage=(Stage)((Node) event.getSource()).getScene().getWindow();
+
+                Scene scene=new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            }
+            catch (Exception e){
+                System.out.println(e);
+            }
+
+        });
+
+        Thread thread=new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
